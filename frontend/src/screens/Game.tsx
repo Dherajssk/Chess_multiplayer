@@ -3,24 +3,58 @@ import { Chessboard } from "../components/Chessboard/Chessboard";
 import { useSocket } from "../hooks/useSocket";
 import { Chess } from "chess.js";
 import { Chat } from "../components/Chat/Chat";
+import { useLocation } from "react-router-dom";
+import { VideoCall } from "../components/VideoCall/VideoCall";
 
 const INIT_GAME = "INIT_GAME";
 const MOVE = "MOVE";
 
 export const Game = () => {
   const socket = useSocket();
+  const location = useLocation();
   const [chess, setChess] = useState(new Chess());
   const [board, setBoard] = useState(chess.board());
   const [color, setColor] = useState<"w" | "b">("w");
   const [winner, setWinner] = useState<null | "w" | "b">(null);
   const [gameStarted, setGameStarted] = useState(false);
   const [chatMessages, setChatMessages] = useState<{ sender: string; text: string }[]>([]);
+  const [waiting, setWaiting] = useState(false);
+  const [roomError, setRoomError] = useState("");
+
+  // Get roomId from query string
+  const params = new URLSearchParams(location.search);
+  const roomId = params.get("roomId");
 
   useEffect(() => {
     if (!socket) return;
 
+    // Room join/create logic
+    if (roomId) {
+      const isCreator = location.state && location.state.created;
+      if (isCreator) {
+        socket.send(JSON.stringify({ type: "CREATE_ROOM", payload: { roomId } }));
+        setWaiting(true);
+      } else {
+        socket.send(JSON.stringify({ type: "JOIN_ROOM", payload: { roomId } }));
+        setWaiting(true);
+      }
+    }
+
     socket.onmessage = (event) => {
       const message = JSON.parse(event.data);
+
+      if (message.type === "ROOM_CREATED") {
+        // Wait for another player to join
+        setWaiting(true);
+      } else if (message.type === "ROOM_JOINED") {
+        setWaiting(false);
+        setGameStarted(true);
+        setRoomError("");
+      } else if (message.type === "ROOM_ERROR") {
+        setRoomError(message.payload.error);
+        setWaiting(false);
+        setGameStarted(false);
+      }
 
       if (message.type === INIT_GAME) {
         const newGame = new Chess();
@@ -83,10 +117,33 @@ export const Game = () => {
       </div>
     );
   }
+  if (roomError) {
+    return (
+      <div className="text-center text-red-500 text-xl mt-10">
+        {roomError}
+      </div>
+    );
+  }
+  if (waiting) {
+    return (
+      <div className="min-h-screen flex flex-col justify-center items-center bg-gray-100 p-6">
+        <div className="bg-white shadow-lg rounded-lg p-8 flex flex-col items-center">
+          <div className="text-2xl font-bold text-gray-800 mb-4">Waiting for another player to join...</div>
+          {roomId && (
+            <div className="text-lg text-gray-600">Room ID: <span className="font-mono text-green-600">{roomId}</span></div>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-gray-100 p-6">
       <div className="max-w-screen-lg w-full grid grid-cols-8 gap-6">
+        {/* Video Call at the top, spanning all columns */}
+        <div className="col-span-8 flex justify-center">
+          <VideoCall socket={socket} roomId={roomId} isInitiator={!!(location.state && location.state.created)} />
+        </div>
         {/* Chat */}
         <div className="col-span-2 bg-white shadow-lg rounded-lg p-4 flex flex-col h-[600px] max-h-[80vh] min-w-[220px]">
           <h2 className="text-lg font-semibold mb-2">Chat</h2>

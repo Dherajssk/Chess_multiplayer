@@ -37,6 +37,16 @@ export class Gamemanager{
         socket.on("message",(data)=>{
            const message = JSON.parse(data.toString());
            console.log("Received message:", message);
+          // Relay WebRTC signaling messages
+          const SIGNAL_TYPES = ["VIDEO_OFFER", "VIDEO_ANSWER", "VIDEO_ICE"];
+          if (SIGNAL_TYPES.includes(message.type)) {
+              const game = this.games.find(game => game.player1 === socket || game.player2 === socket);
+              if (game) {
+                  const target = (game.player1 === socket) ? game.player2 : game.player1;
+                  target.send(JSON.stringify(message));
+              }
+              return;
+          }
           // Room creation
           if (message.type === CREATE_ROOM) {
               // Use provided roomId if present, else generate one

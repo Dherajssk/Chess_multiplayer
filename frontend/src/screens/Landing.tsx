@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {useNavigate} from 'react-router-dom';
 import chessboardImage from '../assets/chessboard.png';
 
@@ -8,6 +8,33 @@ export const Landing = () => {
     playingNow: '219,413',
   };
   const navigate=useNavigate();
+  const [mode, setMode] = useState<null | 'create' | 'join'>(null);
+  const [roomId, setRoomId] = useState('');
+  const [createdRoomId, setCreatedRoomId] = useState('');
+  const [error, setError] = useState('');
+
+  // Generate a random room ID (same as backend)
+  const generateRoomId = () => Math.random().toString(36).substr(2, 8);
+
+  const handleCreate = () => {
+    const newId = generateRoomId();
+    setCreatedRoomId(newId);
+    setMode('create');
+  };
+
+  const handleJoin = () => {
+    if (!roomId.trim()) {
+      setError('Please enter a room ID.');
+      return;
+    }
+    setError('');
+    navigate(`/game?roomId=${roomId.trim()}`);
+  };
+
+  const handleStartCreated = () => {
+    navigate(`/game?roomId=${createdRoomId}`, { state: { created: true } });
+  };
+
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white relative overflow-hidden">
       {/* Background Pattern */}
@@ -66,20 +93,62 @@ export const Landing = () => {
                 </div>
               </div>
 
-              {/* CTA Button */}
-              <div className="pt-6">
-                <button onClick={()=>{navigate("/game")}}className="group relative bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold text-xl px-12 py-5 rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-300 border-2 border-green-400 hover:border-green-300">
-                  <span className="relative z-10 flex items-center gap-3">
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-7 4h12a2 2 0 002-2V8a2 2 0 00-2-2H7a2 2 0 00-2 2v4a2 2 0 002 2z" />
-                    </svg>
-                    Play Online
-                    <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                    </svg>
-                  </span>
-                  <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 rounded-2xl transition-opacity duration-300"></div>
-                </button>
+              {/* Room Selection UI */}
+              <div className="pt-6 flex flex-col items-center gap-4">
+                {!mode && (
+                  <>
+                    <button
+                      onClick={handleCreate}
+                      className="w-64 mb-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold text-xl px-8 py-4 rounded-2xl shadow-2xl border-2 border-green-400 hover:border-green-300 transition-all duration-300"
+                    >
+                      Create Game
+                    </button>
+                    <button
+                      onClick={() => setMode('join')}
+                      className="w-64 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold text-xl px-8 py-4 rounded-2xl shadow-2xl border-2 border-blue-400 hover:border-blue-300 transition-all duration-300"
+                    >
+                      Join Game
+                    </button>
+                  </>
+                )}
+                {mode === 'create' && (
+                  <div className="flex flex-col items-center gap-3 w-full">
+                    <div className="text-lg text-gray-200">Share this Room ID with your friend:</div>
+                    <div className="text-2xl font-mono bg-gray-900 text-green-400 px-6 py-2 rounded-lg border border-green-500 select-all">{createdRoomId}</div>
+                    <button
+                      onClick={handleStartCreated}
+                      className="mt-4 w-48 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg"
+                    >
+                      Start Game
+                    </button>
+                    <button
+                      onClick={() => { setMode(null); setCreatedRoomId(''); }}
+                      className="mt-2 text-sm text-gray-400 hover:underline"
+                    >Back</button>
+                  </div>
+                )}
+                {mode === 'join' && (
+                  <div className="flex flex-col items-center gap-3 w-full">
+                    <input
+                      className="w-64 px-4 py-2 rounded-lg border border-blue-400 text-white-900 text-lg focus:outline-none focus:ring"
+                      type="text"
+                      placeholder="Enter Room ID"
+                      value={roomId}
+                      onChange={e => setRoomId(e.target.value)}
+                    />
+                    {error && <div className="text-red-400 text-sm">{error}</div>}
+                    <button
+                      onClick={handleJoin}
+                      className="w-48 bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg"
+                    >
+                      Join Game
+                    </button>
+                    <button
+                      onClick={() => { setMode(null); setRoomId(''); setError(''); }}
+                      className="mt-2 text-sm text-gray-400 hover:underline"
+                    >Back</button>
+                  </div>
+                )}
               </div>
 
               {/* Additional Info */}
