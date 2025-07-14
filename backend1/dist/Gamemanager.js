@@ -4,8 +4,14 @@ exports.Gamemanager = void 0;
 const Game_1 = require("./Game");
 const INIT_GAME = "INIT_GAME";
 const MOVE = "MOVE";
+const CREATE_ROOM = "CREATE_ROOM";
+const JOIN_ROOM = "JOIN_ROOM";
+const ROOM_CREATED = "ROOM_CREATED";
+const ROOM_JOINED = "ROOM_JOINED";
+const ROOM_ERROR = "ROOM_ERROR";
 class Gamemanager {
     constructor() {
+        this.rooms = {};
         this.games = [];
         this.pendinguser = null;
         this.users = [];
@@ -16,12 +22,52 @@ class Gamemanager {
     }
     removeuser(socket) {
         this.users = this.users.filter(user => user !== socket);
+        // Remove from rooms if present
+        for (const roomId in this.rooms) {
+            if (this.rooms[roomId].host === socket) {
+                delete this.rooms[roomId];
+            }
+            else if (this.rooms[roomId].guest === socket) {
+                delete this.rooms[roomId].guest;
+            }
+        }
     }
     addhandler(socket) {
         socket.on("message", (data) => {
             const message = JSON.parse(data.toString());
             console.log("Received message:", message);
+            // Room creation
+            if (message.type === CREATE_ROOM) {
+                // Use provided roomId if present, else generate one
+                const roomId = message.payload && message.payload.roomId ? message.payload.roomId : Math.random().toString(36).substr(2, 8);
+                this.rooms[roomId] = { host: socket };
+                socket.send(JSON.stringify({ type: ROOM_CREATED, payload: { roomId } }));
+                return;
+            }
+            // Room joining
+            if (message.type === JOIN_ROOM) {
+                const { roomId } = message.payload;
+                const room = this.rooms[roomId];
+                if (!room) {
+                    socket.send(JSON.stringify({ type: ROOM_ERROR, payload: { error: "Room not found" } }));
+                    return;
+                }
+                if (room.guest) {
+                    socket.send(JSON.stringify({ type: ROOM_ERROR, payload: { error: "Room full" } }));
+                    return;
+                }
+                room.guest = socket;
+                // Notify both players
+                room.host.send(JSON.stringify({ type: ROOM_JOINED, payload: { roomId, role: "host" } }));
+                room.guest.send(JSON.stringify({ type: ROOM_JOINED, payload: { roomId, role: "guest" } }));
+                // Start the game for both
+                const game = new Game_1.Game(room.host, room.guest);
+                this.games.push(game);
+                delete this.rooms[roomId];
+                return;
+            }
             if (message.type === INIT_GAME) {
+                // Old quick match logic (keep for fallback/testing)
                 if (this.pendinguser) {
                     console.log("User2 connected");
                     const game = new Game_1.Game(this.pendinguser, socket);
