@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Chessboard } from "../components/Chessboard/Chessboard";
 import { useSocket } from "../hooks/useSocket";
 import { Chess } from "chess.js";
+import { Chat } from "../components/Chat/Chat";
 
 const INIT_GAME = "INIT_GAME";
 const MOVE = "MOVE";
@@ -13,6 +14,7 @@ export const Game = () => {
   const [color, setColor] = useState<"w" | "b">("w");
   const [winner, setWinner] = useState<null | "w" | "b">(null);
   const [gameStarted, setGameStarted] = useState(false);
+  const [chatMessages, setChatMessages] = useState<{ sender: string; text: string }[]>([]);
 
   useEffect(() => {
     if (!socket) return;
@@ -26,6 +28,7 @@ export const Game = () => {
         setBoard(newGame.board());
         setGameStarted(true);
         setWinner(null);
+        setChatMessages([]); // Clear chat on new game
 
         if (message.payload.color === "white") {
           setColor("w");
@@ -46,9 +49,22 @@ export const Game = () => {
         if (winColor === "black") winColor = "b";
         setWinner(winColor);
         setGameStarted(false);
+      } else if (message.type === "CHAT") {
+        setChatMessages((prev) => [...prev, { sender: message.payload.sender, text: message.payload.text }]);
       }
     };
   }, [socket]);
+
+  const handleSendChat = (text: string) => {
+    if (socket && text.trim() !== "") {
+      socket.send(
+        JSON.stringify({
+          type: "CHAT",
+          payload: { text },
+        })
+      );
+    }
+  };
 
   // 🔁 Auto-update moves from current chess instance
   const history = chess.history(); // SAN format: ["e4", "e5", "Nf3", "Nc6", ...]
@@ -70,7 +86,12 @@ export const Game = () => {
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-gray-100 p-6">
-      <div className="max-w-screen-lg w-full grid grid-cols-6 gap-6">
+      <div className="max-w-screen-lg w-full grid grid-cols-8 gap-6">
+        {/* Chat */}
+        <div className="col-span-2 bg-white shadow-lg rounded-lg p-4 flex flex-col h-[600px] max-h-[80vh] min-w-[220px]">
+          <h2 className="text-lg font-semibold mb-2">Chat</h2>
+          <Chat messages={chatMessages} onSend={handleSendChat} color={color} />
+        </div>
         {/* Chessboard */}
         <div className="col-span-4 bg-white shadow-lg rounded-lg p-4 flex flex-col items-center justify-center">
           {winner && (
@@ -86,7 +107,6 @@ export const Game = () => {
             flipped={color === "b"}
           />
         </div>
-
         {/* Sidebar: Play button + Move history */}
         <div className="col-span-2 bg-white shadow-lg rounded-lg p-6 flex flex-col items-center justify-start w-full">
           <button

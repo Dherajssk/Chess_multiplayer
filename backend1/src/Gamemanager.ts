@@ -43,6 +43,21 @@ export class Gamemanager{
                }
                
            }
+           // Handle chat messages
+           if(message.type === "CHAT") {
+               const game = this.games.find(game => game.player1 === socket || game.player2 === socket);
+               if (game) {
+                   const chatMsg = {
+                       type: "CHAT",
+                       payload: {
+                           sender: socket === game.player1 ? "white" : "black",
+                           text: message.payload.text
+                       }
+                   };
+                   game.player1.send(JSON.stringify(chatMsg));
+                   game.player2.send(JSON.stringify(chatMsg));
+               }
+           }
         })
     }
 }
