@@ -187,7 +187,7 @@ export const VideoCall: React.FC<VideoCallProps> = ({ socket, roomId, isInitiato
   }, [socket, roomId, isInitiator]);
 
   return (
-    <div className="flex flex-col items-center gap-2 mb-4">
+    <div className="flex flex-col items-center gap-2 mb-4 video-call">
       <div className="flex justify-center items-center gap-4">
         <div className="relative w-32 h-32">
           <video
@@ -195,19 +195,19 @@ export const VideoCall: React.FC<VideoCallProps> = ({ socket, roomId, isInitiato
             autoPlay
             muted
             playsInline
-            className={`absolute top-0 left-0 w-32 h-32 rounded-lg border-2 border-green-400 bg-black ${cameraOn ? "" : "hidden"}`}
+            className={`absolute top-0 left-0 w-32 h-32 rounded-lg border-4 border-green-400 bg-black shadow-lg ${cameraOn ? "" : "hidden"}`}
           />
           {!cameraOn && (
-            <div className="absolute top-0 left-0 w-32 h-32 flex items-center justify-center rounded-lg border-2 border-green-400 bg-gray-800 text-gray-300 text-lg font-semibold z-10">
+            <div className="absolute top-0 left-0 w-32 h-32 flex items-center justify-center rounded-lg border-4 border-green-400 bg-gray-800 text-gray-300 text-lg font-semibold z-10">
               Camera Off
             </div>
           )}
         </div>
-        <video ref={remoteVideoRef} autoPlay playsInline className="w-32 h-32 rounded-lg border-2 border-blue-400 bg-black" />
+        <video ref={remoteVideoRef} autoPlay playsInline className="w-32 h-32 rounded-lg border-4 border-blue-400 bg-black shadow-lg" />
       </div>
       <button
         onClick={handleToggleCamera}
-        className={`mt-1 px-4 py-1 rounded-full text-sm font-semibold shadow ${cameraOn ? "bg-red-500 hover:bg-red-600 text-white" : "bg-green-500 hover:bg-green-600 text-white"}`}
+        className={`mt-1 px-4 py-1 rounded-full text-sm font-semibold btn ${cameraOn ? "bg-red-500 hover:bg-red-600 text-white" : ""}`}
       >
         {cameraOn ? "Turn Off Camera" : "Turn On Camera"}
       </button>

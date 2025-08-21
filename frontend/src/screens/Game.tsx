@@ -126,11 +126,11 @@ export const Game = () => {
   }
   if (waiting) {
     return (
-      <div className="min-h-screen flex flex-col justify-center items-center bg-gray-100 p-6">
-        <div className="bg-white shadow-lg rounded-lg p-8 flex flex-col items-center">
-          <div className="text-2xl font-bold text-gray-800 mb-4">Waiting for another player to join...</div>
+      <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-gray-900 via-gray-800 to-black p-6">
+        <div className="card flex flex-col items-center">
+          <div className="text-2xl font-bold text-green-400 mb-4">Waiting for another player to join...</div>
           {roomId && (
-            <div className="text-lg text-gray-600">Room ID: <span className="font-mono text-green-600">{roomId}</span></div>
+            <div className="text-lg text-gray-300">Room ID: <span className="font-mono text-green-400">{roomId}</span></div>
           )}
         </div>
       </div>
@@ -138,21 +138,21 @@ export const Game = () => {
   }
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gray-100 p-6">
-      <div className="max-w-screen-lg w-full grid grid-cols-8 gap-6">
+    <div className="min-h-screen flex justify-center items-center bg-gradient-to-br from-gray-900 via-gray-800 to-black p-6">
+      <div className="max-w-screen-lg w-full grid grid-cols-8 gap-6 card">
         {/* Video Call at the top, spanning all columns */}
-        <div className="col-span-8 flex justify-center">
+        <div className="col-span-8 flex justify-center video-call">
           <VideoCall socket={socket} roomId={roomId} isInitiator={!!(location.state && location.state.created)} />
         </div>
         {/* Chat */}
-        <div className="col-span-2 bg-white shadow-lg rounded-lg p-4 flex flex-col h-[600px] max-h-[80vh] min-w-[220px]">
-          <h2 className="text-lg font-semibold mb-2">Chat</h2>
+        <div className="col-span-2 flex flex-col h-[600px] max-h-[80vh] min-w-[220px] card">
+          <h2 className="text-lg font-semibold mb-2 text-green-400">Chat</h2>
           <Chat messages={chatMessages} onSend={handleSendChat} color={color} />
         </div>
         {/* Chessboard */}
-        <div className="col-span-4 bg-white shadow-lg rounded-lg p-4 flex flex-col items-center justify-center">
+        <div className="col-span-4 flex flex-col items-center justify-center chessboard-container">
           {winner && (
-            <div className="mb-4 text-2xl font-bold text-green-700">
+            <div className="winner-banner">
               Game Over! Winner: {winner === "w" ? "White" : "Black"}
             </div>
           )}
@@ -165,23 +165,19 @@ export const Game = () => {
           />
         </div>
         {/* Sidebar: Play button + Move history */}
-        <div className="col-span-2 bg-white shadow-lg rounded-lg p-6 flex flex-col items-center justify-start w-full">
+        <div className="col-span-2 flex flex-col items-center justify-start w-full card">
           <button
             disabled={gameStarted}
             onClick={() => {
               socket?.send(JSON.stringify({ type: INIT_GAME }));
             }}
-            className={`w-full mb-4 ${
-              gameStarted
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-green-500 hover:bg-green-600"
-            } text-white font-semibold py-3 px-6 rounded-lg text-lg shadow-md`}
+            className={`btn w-full mb-4 text-lg ${gameStarted ? "bg-gray-400 cursor-not-allowed" : ""}`}
           >
             {gameStarted ? "Game In Progress" : "Play"}
           </button>
 
-          <div className="w-full text-left">
-            <h2 className="text-lg font-semibold mb-2">Move History</h2>
+          <div className="w-full text-left move-history">
+            <h2 className="text-lg font-semibold mb-2 text-blue-400">Move History</h2>
             <table className="w-full text-sm font-mono">
               <thead>
                 <tr className="border-b">

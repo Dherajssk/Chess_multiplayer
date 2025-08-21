@@ -1,42 +1,101 @@
+
+body {
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  background: linear-gradient(135deg, #232526 0%, #414345 100%);
+  color: #f3f3f3;
+  min-height: 100vh;
+}
+
 #root {
-  max-width: 1280px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
 .card {
+  background: rgba(34, 40, 49, 0.95);
+  border-radius: 1.5rem;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
   padding: 2em;
+  margin-bottom: 2em;
+  border: 1px solid rgba(255,255,255,0.08);
 }
 
-.read-the-docs {
-  color: #888;
+.btn {
+  background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  border-radius: 1em;
+  padding: 0.75em 2em;
+  box-shadow: 0 2px 8px rgba(67,233,123,0.15);
+  transition: background 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+.btn:hover {
+  background: linear-gradient(90deg, #38f9d7 0%, #43e97b 100%);
+  box-shadow: 0 4px 16px rgba(67,233,123,0.25);
+}
+
+.input {
+  background: #232526;
+  color: #fff;
+  border: 1px solid #38f9d7;
+  border-radius: 0.75em;
+  padding: 0.5em 1em;
+  font-size: 1.1em;
+  margin-bottom: 0.5em;
+  transition: border 0.2s;
+}
+.input:focus {
+  border: 1.5px solid #43e97b;
+  outline: none;
+}
+
+.chessboard-container {
+  background: linear-gradient(135deg, #232526 0%, #38f9d7 100%);
+  border-radius: 1.5em;
+  box-shadow: 0 4px 24px rgba(67,233,123,0.15);
+  padding: 1.5em;
+}
+
+.chat-bubble {
+  background: #232526;
+  color: #fff;
+  border-radius: 1em;
+  padding: 0.75em 1.5em;
+  margin-bottom: 0.5em;
+  box-shadow: 0 2px 8px rgba(67,233,123,0.10);
+}
+.chat-bubble.ours {
+  background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
+  color: #232526;
+  text-align: right;
+}
+
+.video-call {
+  background: rgba(34, 40, 49, 0.85);
+  border-radius: 1em;
+  padding: 1em;
+  box-shadow: 0 2px 12px rgba(38, 135, 233, 0.10);
+}
+
+.move-history {
+  background: rgba(34, 40, 49, 0.85);
+  border-radius: 1em;
+  padding: 1em;
+  box-shadow: 0 2px 12px rgba(38, 135, 233, 0.10);
+  margin-top: 1em;
+}
+
+.winner-banner {
+  background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
+  color: #232526;
+  border-radius: 1em;
+  padding: 1em 2em;
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-bottom: 1em;
+  box-shadow: 0 2px 12px rgba(67,233,123,0.15);
 }

@@ -36,7 +36,7 @@ export const Landing = () => {
   };
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white relative overflow-hidden">
+  <div className="min-h-screen w-full bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white relative overflow-hidden flex items-center justify-center">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute top-10 left-10 w-20 h-20 border border-white rotate-45"></div>
@@ -46,17 +46,17 @@ export const Landing = () => {
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 min-h-screen flex items-center justify-center px-6 py-12">
-        <div className="max-w-7xl mx-auto w-full">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+      <div className="relative z-10 w-full flex items-center justify-center px-6 py-12">
+        <div className="max-w-5xl mx-auto w-full">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center card">
             
             {/* Chess Board Section */}
             <div className="flex justify-center lg:justify-end">
-              <div className="relative">
+              <div className="relative chessboard-container">
                 <img
                   src={chessboardImage}
                   alt="Chess Board"
-                  className="w-96 h-96 lg:w-[480px] lg:h-[480px] object-contain rounded-lg shadow-2xl hover:scale-105 transition-transform duration-300"
+                  className="w-80 h-80 lg:w-[400px] lg:h-[400px] object-contain rounded-lg shadow-2xl hover:scale-105 transition-transform duration-300 border-4 border-green-400"
                 />
                 {/* Floating stats */}
                 <div className="absolute -top-6 -right-6 bg-green-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg animate-pulse">
@@ -69,10 +69,10 @@ export const Landing = () => {
             <div className="text-center lg:text-left space-y-8">
               {/* Main Heading */}
               <div className="space-y-4">
-                <h1 className="text-5xl lg:text-7xl font-bold leading-tight bg-gradient-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent">
+                <h1 className="text-5xl lg:text-7xl font-bold leading-tight bg-gradient-to-r from-green-400 via-blue-400 to-purple-400 bg-clip-text text-transparent drop-shadow-lg">
                   Play Chess Online
                 </h1>
-                <h2 className="text-3xl lg:text-5xl font-bold text-green-400">
+                <h2 className="text-3xl lg:text-5xl font-bold text-green-400 drop-shadow">
                   on the #1 Site!
                 </h2>
               </div>
@@ -99,13 +99,14 @@ export const Landing = () => {
                   <>
                     <button
                       onClick={handleCreate}
-                      className="w-64 mb-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold text-xl px-8 py-4 rounded-2xl shadow-2xl border-2 border-green-400 hover:border-green-300 transition-all duration-300"
+                      className="btn w-64 mb-2 text-xl"
                     >
                       Create Game
                     </button>
                     <button
                       onClick={() => setMode('join')}
-                      className="w-64 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold text-xl px-8 py-4 rounded-2xl shadow-2xl border-2 border-blue-400 hover:border-blue-300 transition-all duration-300"
+                      className="btn w-64 text-xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
+                      style={{background: 'linear-gradient(90deg, #38f9d7 0%, #43e97b 100%)'}}
                     >
                       Join Game
                     </button>
@@ -130,7 +131,7 @@ export const Landing = () => {
                 {mode === 'join' && (
                   <div className="flex flex-col items-center gap-3 w-full">
                     <input
-                      className="w-64 px-4 py-2 rounded-lg border border-blue-400 text-white-900 text-lg focus:outline-none focus:ring"
+                      className="input w-64 text-lg"
                       type="text"
                       placeholder="Enter Room ID"
                       value={roomId}
@@ -139,7 +140,8 @@ export const Landing = () => {
                     {error && <div className="text-red-400 text-sm">{error}</div>}
                     <button
                       onClick={handleJoin}
-                      className="w-48 bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg"
+                      className="btn w-48"
+                      style={{background: 'linear-gradient(90deg, #38f9d7 0%, #43e97b 100%)'}}
                     >
                       Join Game
                     </button>

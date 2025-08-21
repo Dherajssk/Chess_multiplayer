@@ -40,14 +40,14 @@ export const Chessboard = ({
   }
 
   return (
-    <div className="border-4 border-gray-800 inline-block">
+    <div className="border-4 border-green-400 inline-block rounded-xl shadow-xl chessboard-container">
       {rowIndices.map((rowIdx) => (
         <div key={rowIdx} className="flex">
           {colIndices.map((colIdx) => {
             const square = board[rowIdx][colIdx];
             const squareName = getSquareName(rowIdx, colIdx);
             const isDark = (rowIdx + colIdx) % 2 !== 0;
-            const bgColor = isDark ? "bg-green-600" : "bg-green-300";
+            const bgColor = isDark ? "bg-green-700" : "bg-green-300";
             const textColor =
               square?.color === "w" ? "text-white" : "text-black";
 
@@ -80,9 +80,10 @@ export const Chessboard = ({
                     console.log(`Move from ${from} to ${to}`);
                   }
                 }}
-                className={`w-12 h-12 flex items-center justify-center text-lg font-bold cursor-pointer ${bgColor} ${
+                className={`w-12 h-12 flex items-center justify-center text-lg font-bold cursor-pointer transition-all duration-150 ${bgColor} ${
                   square ? textColor : ""
-                } ${from === squareName ? "ring-4 ring-yellow-400" : ""}`}
+                } ${from === squareName ? "ring-4 ring-yellow-400" : ""} hover:scale-105 hover:z-10`}
+                style={{ boxShadow: isDark ? '0 2px 8px rgba(67,233,123,0.10)' : '0 2px 8px rgba(67,233,123,0.05)' }}
               >
                 {square ? (
                   <img
