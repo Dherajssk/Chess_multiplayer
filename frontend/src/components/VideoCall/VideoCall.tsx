@@ -12,6 +12,7 @@ export const VideoCall: React.FC<VideoCallProps> = ({ socket, roomId, isInitiato
   const pcRef = useRef<RTCPeerConnection | null>(null);
   const localStreamRef = useRef<MediaStream | null>(null);
   const [cameraOn, setCameraOn] = useState(true);
+  const isMounted = useRef(true);
 
   // Helper to (re)acquire video
   const startVideo = async () => {
@@ -94,8 +95,8 @@ export const VideoCall: React.FC<VideoCallProps> = ({ socket, roomId, isInitiato
   };
 
   useEffect(() => {
-    if (!socket || !roomId) return;
-    
+  if (!socket || !roomId) return;
+  isMounted.current = true;
 
     const setupConnection = async () => {
       // 1. Create peer connection
@@ -174,7 +175,7 @@ export const VideoCall: React.FC<VideoCallProps> = ({ socket, roomId, isInitiato
 
     setupConnection();
     return () => {
-      isMounted = false;
+  isMounted.current = false;
       if (pcRef.current) {
         pcRef.current.close();
         pcRef.current = null;
@@ -214,3 +215,4 @@ export const VideoCall: React.FC<VideoCallProps> = ({ socket, roomId, isInitiato
     </div>
   );
 }; 
+
