@@ -95,7 +95,7 @@ export const VideoCall: React.FC<VideoCallProps> = ({ socket, roomId, isInitiato
 
   useEffect(() => {
     if (!socket || !roomId) return;
-    
+    let isMounted=true;
 
     const setupConnection = async () => {
       // 1. Create peer connection
