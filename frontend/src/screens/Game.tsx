@@ -12,7 +12,7 @@ const MOVE = "MOVE";
 export const Game = () => {
   const socket = useSocket();
   const location = useLocation();
-  const [chess, setChess] = useState(new Chess());
+  const [chess] = useState(new Chess());
   const [board, setBoard] = useState(chess.board());
   const [color, setColor] = useState<"w" | "b">("w");
   const [winner, setWinner] = useState<null | "w" | "b">(null);
