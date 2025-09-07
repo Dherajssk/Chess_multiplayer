@@ -1,5 +1,5 @@
 import {useState, useEffect} from 'react';
-const WS_URL= 'https://chess-multiplayer-1p51.onrender.com/'; // Adjust the URL as needed
+const WS_URL= 'https://chessmultiplayer4.onrender.com'; // Adjust the URL as needed
 
 export const useSocket =() =>{
     const [socket, setSocket] = useState<WebSocket | null>(null);
