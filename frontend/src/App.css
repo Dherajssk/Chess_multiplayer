@@ -22,6 +22,79 @@ body {
   border: 1px solid rgba(255,255,255,0.08);
 }
 
+@media (max-width: 900px) {
+  .card {
+    padding: 1em;
+    margin-bottom: 1em;
+  }
+  .move-history, .video-call {
+    padding: 0.5em;
+  }
+}
+
+@media (max-width: 700px) {
+  #root {
+    padding: 0.2rem;
+  }
+  .card {
+    padding: 0.5em;
+    border-radius: 0.7em;
+    margin-bottom: 0.5em;
+  }
+  .chessboard-container {
+    padding: 0.2em;
+    border-radius: 0.7em;
+    min-width: 0;
+    width: 100vw;
+    max-width: 100vw;
+    overflow-x: auto;
+  }
+  .move-history, .video-call {
+    padding: 0.2em;
+    border-radius: 0.7em;
+  }
+  .winner-banner {
+    font-size: 1.1em;
+    padding: 0.7em 0.5em;
+  }
+  .chat-bubble {
+    font-size: 1em;
+    padding: 0.5em 1em;
+    word-break: break-word;
+    max-width: 90vw;
+  }
+}
+
+@media (max-width: 500px) {
+  .chessboard-container {
+    padding: 0.1em;
+    border-radius: 0.5em;
+    min-width: 0;
+    width: 100vw;
+    max-width: 100vw;
+    overflow-x: auto;
+  }
+  .card {
+    padding: 0.2em;
+    border-radius: 0.5em;
+    margin-bottom: 0.2em;
+  }
+  .move-history, .video-call {
+    padding: 0.1em;
+    border-radius: 0.5em;
+  }
+  .winner-banner {
+    font-size: 1em;
+    padding: 0.5em 0.2em;
+  }
+  .chat-bubble {
+    font-size: 0.95em;
+    padding: 0.4em 0.7em;
+    word-break: break-word;
+    max-width: 98vw;
+  }
+}
+
 .btn {
   background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
   color: #fff;

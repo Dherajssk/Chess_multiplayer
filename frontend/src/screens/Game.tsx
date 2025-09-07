@@ -148,19 +148,22 @@ export const Game = () => {
   }
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gradient-to-br from-gray-900 via-gray-800 to-black p-6">
-      <div className="max-w-screen-lg w-full grid grid-cols-8 gap-6 card">
+    <div className="min-h-screen flex justify-center items-center bg-gradient-to-br from-gray-900 via-gray-800 to-black p-1 sm:p-6">
+      <div className="max-w-screen-lg w-full grid grid-cols-8 gap-6 card
+        sm:grid-cols-8
+        grid-cols-1
+        ">
         {/* Video Call at the top, spanning all columns */}
         <div className="col-span-8 flex justify-center video-call">
           <VideoCall socket={socket} roomId={roomId} isInitiator={!!(location.state && location.state.created)} />
         </div>
         {/* Chat */}
-        <div className="col-span-2 flex flex-col h-[600px] max-h-[80vh] min-w-[220px] card">
+  <div className="col-span-2 sm:col-span-2 col-span-8 flex flex-col h-[220px] sm:h-[600px] max-h-[40vh] sm:max-h-[60vh] min-w-[0] card mb-2 sm:mb-0">
           <h2 className="text-lg font-semibold mb-2 text-green-400">Chat</h2>
           <Chat messages={chatMessages} onSend={handleSendChat} color={color} />
         </div>
         {/* Chessboard */}
-        <div className="col-span-4 flex flex-col items-center justify-center chessboard-container">
+  <div className="col-span-4 sm:col-span-4 col-span-8 flex flex-col items-center justify-center chessboard-container mb-2 sm:mb-0 w-full">
           {drawReason === 'threefold' && (
             <div className="winner-banner bg-yellow-400 text-black">
               Game Drawn by Threefold Repetition!
@@ -202,7 +205,7 @@ export const Game = () => {
           />
         </div>
         {/* Sidebar: Play button + Move history */}
-        <div className="col-span-2 flex flex-col items-center justify-start w-full card">
+  <div className="col-span-2 sm:col-span-2 col-span-8 flex flex-col items-center justify-start w-full card mt-2 sm:mt-0">
           <button
             disabled={gameStarted}
             onClick={() => {
