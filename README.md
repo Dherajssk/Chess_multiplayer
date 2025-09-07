@@ -1,87 +1,85 @@
 ♟️ Real-Time Multiplayer Chess Platform
 
-A modern, real-time multiplayer chess platform built with WebSockets, designed for seamless gameplay, interactivity, and accessibility. Whether you want to challenge a friend, meet a new opponent, or enjoy a smooth game experience with built-in communication features—this platform has it all.
+A modern, real-time multiplayer chess platform built from the ground up with WebSockets and WebRTC. This project goes beyond standard chess applications by integrating live communication features, complex game logic, and real-time synchronization—creating an immersive and interactive chess experience.
 
-🚀 Features
+🚀 Why This Project Stands Out
+Unlike simple chess clones, this platform required implementing complex game state management, concurrency handling, and custom communication pipelines. Key challenges included ensuring consistency of moves across clients, integrating chat and video communication, and handling chess-specific edge cases like draws, stalemates, pawn promotions, and checkmate detection.
+
+🔑 Features
 🔗 Real-Time Multiplayer Chess
 
 Play live chess games with friends or random opponents.
-Powered by WebSockets for instant, lag-free gameplay.
-Every move is synced in real time, ensuring smooth and fair play.
+Built on WebSockets for instant, lag-free synchronization of moves.
+Ensures both players always share the same consistent game state.
 
 🏠 Room System
 
-Create a custom game room and share the room ID with your friend.
-Or, join an existing room instantly with a valid room ID.
-Makes it simple to organize private matches.
+Create private rooms and share a unique Room ID.
+Join existing rooms instantly with a valid Room ID.
+Supports multiple isolated matches running in parallel.
 
 💬 Live Chat
 
-Built-in chat system for instant messaging.
-Chat with your opponent while you play, without needing third-party apps.
-Messages appear instantly thanks to WebSocket integration.
+Integrated WebSocket-based chat for instant messaging.
+No third-party apps needed—communicate with your opponent directly inside the game.
 
 🎥 Video Call Integration
 
-Take communication to the next level with video call support.
-Start a real-time video call with your opponent right inside the app.
-Perfect for friends who want a more interactive and personal experience.
+WebRTC-powered video calls embedded in the platform.
+Allows real-time face-to-face interaction while playing.
+Significantly elevates engagement and replicates in-person gameplay.
 
-📜 Move History
+📜 Advanced Chess Logic
 
-A complete history of all moves is stored and displayed.
-Review past moves at any time during the game.
-Great for learning, analyzing strategy, or replaying the game.
+Maintains game state and move validation using chess.js.
+Prevents illegal moves by validating each move against chess rules.
+Automatic detection of:
 
-📱 Responsive UI
+✅ Checkmate
+✅ Stalemate
+✅ Draws (e.g., threefold repetition)
+✅ Pawn promotion (with piece selection)
 
-Fully responsive design for all screen sizes.
-Optimized for both desktop and mobile devices.
-Play anywhere, on any device, without losing functionality.
+Full move history tracking for review and analysis.
 
-🎨 Modern Design
+📱 Responsive & Modern UI
 
-Sleek, modern interface with clean UI elements.
-Styled with custom CSS and Tailwind for a professional look.
-Designed for both usability and aesthetics.
+Built with React + Tailwind CSS for a sleek and professional design.
+Fully responsive—works on desktops, tablets, and mobile devices.
 
-⚡ No Registration Required
+⚡ Instant Access
 
-Instant access—no sign-up or login needed.
-Start playing right away with just a few clicks.
-
-🏆 Game Over Detection
-
-Automatic game-ending logic that detects checkmate.
-Winner is displayed immediately when the game ends.
-Prevents confusion and ensures smooth game flow.
-
-⚪⚫ Player Color Assignment
-
-Players are automatically assigned white or black pieces.
-Ensures fairness without requiring manual setup.
-
-
+No registration or login required.
+Focused on accessibility and frictionless onboarding.
 
 🛠️ Tech Stack
 
 Frontend: React, Tailwind CSS
 Backend: Node.js, WebSockets
-Video/Chat: WebRTC for video calls, WebSockets for chat
-Deployment: (e.g., Vercel, Heroku, or your hosting provider)
+Real-Time Communication:
+WebSockets → Game state + chat
+WebRTC → Video calling
+Deployment: Vercel / Heroku / Any cloud hosting provider
 
 🎮 How to Play
 
 Visit the platform.
-Create a room or join an existing one with a room ID.
-Get automatically assigned as White or Black.
-Play in real time while chatting or video calling your opponent.
-Checkmate is automatically detected and the winner announced.
+Create a room or join with an existing Room ID.
+Start playing in real time while chatting or video calling your opponent.
+Game automatically ends on checkmate, stalemate, or draw—with results displayed instantly.
 
-🔮 Future Improvements
+🔮 Future Roadmap
 
-User accounts & friend lists.
-Leaderboards and rankings.
-Game replays with downloadable PGN files.
-AI opponent for solo play.
+👥 User accounts & friend lists
+🏆 Leaderboards and global rankings
+🎥 Downloadable game replays (PGN support)
+🤖 AI opponent for solo play
+📌 Why This Project Matters
 
+This project showcases expertise in:
+
+Real-time systems design using WebSockets.
+Concurrency and synchronization for multiplayer logic.
+WebRTC integration for peer-to-peer video calls.
+Advanced chess logic implementation with chess.js (move validation, draws, stalemate, promotions).
+Scalable architecture that can support multiple concurrent matches.
