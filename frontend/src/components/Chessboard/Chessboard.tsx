@@ -55,11 +55,19 @@ export const Chessboard = ({
               <div
                 key={colIdx}
                 onClick={() => {
+                  const playerColor = chess.turn(); // 'w' or 'b'
                   if (!from) {
-                    setFrom(squareName);
+                    // Only allow selecting a piece of the player's color
+                    if (square && square.color === playerColor) {
+                      setFrom(squareName);
+                    }
                   } else {
+                    // If clicking another piece of player's color, change selection
+                    if (square && square.color === playerColor) {
+                      setFrom(squareName);
+                      return;
+                    }
                     const to = squareName;
-
                     // Send move over WebSocket
                     socket.send(
                       JSON.stringify({
@@ -72,7 +80,6 @@ export const Chessboard = ({
                         },
                       })
                     );
-
                     // Make the move locally
                     chess.move({ from, to });
                     setFrom(null);
