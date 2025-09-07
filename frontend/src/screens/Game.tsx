@@ -81,7 +81,11 @@ export const Game = () => {
       } else if (message.type === "GAME_OVER") {
         let winColor = message.payload.winner;
         if (winColor === "draw" || winColor === "drawn") {
-          setDrawReason('server');
+          if (message.payload.reason) {
+            setDrawReason(message.payload.reason);
+          } else {
+            setDrawReason('server');
+          }
           setWinner(null);
         } else {
           if (winColor === "white") winColor = "w";
@@ -162,11 +166,21 @@ export const Game = () => {
               Game Drawn by Threefold Repetition!
             </div>
           )}
-          {drawReason === 'server' && (
+          {drawReason === 'stalemate' && (
+            <div className="winner-banner bg-yellow-400 text-black">
+              Game Drawn by Stalemate!
+            </div>
+          )}
+          {drawReason === 'insufficient material' && (
+            <div className="winner-banner bg-yellow-400 text-black">
+              Game Drawn by Insufficient Material!
+            </div>
+          )}
+          {drawReason === 'server' || drawReason === 'draw' ? (
             <div className="winner-banner bg-yellow-400 text-black">
               Game Drawn!
             </div>
-          )}
+          ) : null}
           {!drawReason && winner && (
             <div className="winner-banner">
               Game Over! Winner: {winner === "w" ? "White" : "Black"}

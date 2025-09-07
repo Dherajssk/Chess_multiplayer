@@ -41,7 +41,12 @@ export class Game{
             return;
         }
         try{
-            this.board.move(move);
+            // Support pawn promotion
+            const moveObj: any = { from: move.from, to: move.to };
+            if ((move as any).promotion) {
+                moveObj.promotion = (move as any).promotion;
+            }
+            this.board.move(moveObj);
             this.movescount++;
         }
         catch(e){
@@ -66,20 +71,28 @@ export class Game{
 
         if (this.board.isGameOver()) {
             console.log("Game is over");
+            let winner: string | null = null;
+            let reason: string | undefined = undefined;
+            if (this.board.isDraw()) {
+                winner = "draw";
+                if (this.board.isThreefoldRepetition()) reason = "threefold";
+                else if (this.board.isStalemate()) reason = "stalemate";
+                else if (this.board.isInsufficientMaterial()) reason = "insufficient material";
+                else reason = "draw";
+            } else if (this.board.isCheckmate()) {
+                // The winner is the player who just moved (not board.turn())
+                winner = this.movescount % 2 === 0 ? "white" : "black";
+            }
+            const payload: any = { winner };
+            if (reason) payload.reason = reason;
             this.player1.send(JSON.stringify({
                 type: GAME_OVER,
-                payload: {
-                    winner: this.board.turn() === "w" ? "black" : "white"
-                }
+                payload
             }));
-
             this.player2.send(JSON.stringify({
                 type: GAME_OVER,
-                payload: {
-                    winner: this.board.turn() === "w" ? "black" : "white"
-                }
+                payload
             }));
-
             return;
         }
 

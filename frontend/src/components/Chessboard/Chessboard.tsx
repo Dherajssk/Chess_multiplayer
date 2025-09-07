@@ -19,6 +19,9 @@ type ChessboardProps = {
   playerColor: Color;
   disabled?: boolean;
 };
+type PromotionPiece = 'q' | 'r' | 'b' | 'n';
+const promotionPieces: PromotionPiece[] = ['q', 'r', 'b', 'n'];
+
 export const Chessboard: React.FC<ChessboardProps> = ({
   board,
   socket,
@@ -30,6 +33,8 @@ export const Chessboard: React.FC<ChessboardProps> = ({
   disabled = false,
 }) => {
   const [from, setFrom] = useState<null | Square>(null);
+  const [promotionMove, setPromotionMove] = useState<{ from: Square; to: Square } | null>(null);
+  const [showPromotion, setShowPromotion] = useState(false);
 
   // Proper orientation: when flipped is true, Black is at the bottom
   const rowIndices = flipped ? [7, 6, 5, 4, 3, 2, 1, 0] : [0, 1, 2, 3, 4, 5, 6, 7];
@@ -44,8 +49,86 @@ export const Chessboard: React.FC<ChessboardProps> = ({
     return (file + rank) as Square;
   }
 
+  // Helper to check if a move is a pawn promotion
+  function isPromotionMove(from: Square, to: Square): boolean {
+    const piece = chess.get(from);
+    if (!piece || piece.type !== 'p') return false;
+    const lastRank = piece.color === 'w' ? '8' : '1';
+    return to[1] === lastRank;
+  }
+
+  function handleSquareClick(square: Square, squareObj: any) {
+    if (disabled) return;
+    if (chess.turn() !== playerColor) return;
+    if (!from) {
+      if (squareObj && squareObj.color === playerColor) {
+        setFrom(square);
+      }
+    } else {
+      if (squareObj && squareObj.color === playerColor) {
+        setFrom(square);
+        return;
+      }
+      // Promotion detection
+      if (isPromotionMove(from, square)) {
+        setPromotionMove({ from, to: square });
+        setShowPromotion(true);
+        return;
+      }
+      // Normal move
+      sendMove({ from, to: square });
+    }
+  }
+
+  function sendMove(move: { from: Square; to: Square; promotion?: PromotionPiece }) {
+    socket.send(
+      JSON.stringify({
+        type: MOVE,
+        payload: {
+          move,
+        },
+      })
+    );
+    chess.move(move);
+    setFrom(null);
+    setBoard(chess.board());
+    setShowPromotion(false);
+    setPromotionMove(null);
+    // Check for threefold repetition
+    if (chess.isThreefoldRepetition && chess.isThreefoldRepetition()) {
+      if (typeof onDraw === 'function') {
+        onDraw('threefold');
+      }
+    }
+  }
+
   return (
-    <div className="border-4 border-green-400 inline-block rounded-xl shadow-xl chessboard-container">
+    <div className="border-4 border-green-400 inline-block rounded-xl shadow-xl chessboard-container relative">
+      {/* Promotion Modal */}
+      {showPromotion && promotionMove && (
+        <div className="absolute z-50 left-0 top-0 w-full h-full flex items-center justify-center bg-black bg-opacity-80">
+          <div className="bg-white p-6 rounded-xl shadow-2xl flex flex-col items-center border-4 border-green-400">
+            <div className="mb-3 font-bold text-lg text-black">Choose promotion piece:</div>
+            <div className="flex gap-6">
+              {promotionPieces.map((piece) => (
+                <button
+                  key={piece}
+                  className="text-4xl p-3 border-2 border-green-600 rounded-lg bg-white hover:bg-green-200 focus:bg-green-300 focus:outline-none shadow-md"
+                  style={{ color: '#222', minWidth: 56, minHeight: 56 }}
+                  onClick={() => {
+                    sendMove({ ...promotionMove, promotion: piece });
+                  }}
+                >
+                  {piece === 'q' && <span style={{color: '#222'}}>♕</span>}
+                  {piece === 'r' && <span style={{color: '#222'}}>♖</span>}
+                  {piece === 'b' && <span style={{color: '#222'}}>♗</span>}
+                  {piece === 'n' && <span style={{color: '#222'}}>♘</span>}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
       {rowIndices.map((rowIdx) => (
         <div key={rowIdx} className="flex">
           {colIndices.map((colIdx) => {
@@ -59,47 +142,7 @@ export const Chessboard: React.FC<ChessboardProps> = ({
             return (
               <div
                 key={colIdx}
-                onClick={() => {
-                  if (disabled) return;
-                  // Only allow moving if it's the player's turn
-                  if (chess.turn() !== playerColor) return;
-                  if (!from) {
-                    // Only allow selecting a piece of the player's color
-                    if (square && square.color === playerColor) {
-                      setFrom(squareName);
-                    }
-                  } else {
-                    // If clicking another piece of player's color, change selection
-                    if (square && square.color === playerColor) {
-                      setFrom(squareName);
-                      return;
-                    }
-                    const to = squareName;
-                    // Send move over WebSocket
-                    socket.send(
-                      JSON.stringify({
-                        type: MOVE,
-                        payload: {
-                          move: {
-                            from,
-                            to,
-                          },
-                        },
-                      })
-                    );
-                    // Make the move locally
-                    chess.move({ from, to });
-                    setFrom(null);
-                    setBoard(chess.board());
-                    console.log(`Move from ${from} to ${to}`);
-                    // Check for threefold repetition
-                    if (chess.isThreefoldRepetition && chess.isThreefoldRepetition()) {
-                      if (typeof onDraw === 'function') {
-                        onDraw('threefold');
-                      }
-                    }
-                  }
-                }}
+                onClick={() => handleSquareClick(squareName, square)}
                 className={`w-12 h-12 flex items-center justify-center text-lg font-bold cursor-pointer transition-all duration-150 ${bgColor} ${
                   square ? textColor : ""
                 } ${from === squareName ? "ring-4 ring-yellow-400" : ""} hover:scale-105 hover:z-10`}
