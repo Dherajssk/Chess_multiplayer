@@ -2,7 +2,7 @@
 
 A modern, real-time multiplayer chess platform built from the ground up with WebSockets and WebRTC. This project goes beyond standard chess applications by integrating live communication features, complex game logic, and real-time synchronization—creating an immersive and interactive chess experience.
 
-🚀 Why This Project Stands Out
+🚀 Why This Project Stands Out                                                                           
 Unlike simple chess clones, this platform required implementing complex game state management, concurrency handling, and custom communication pipelines. Key challenges included ensuring consistency of moves across clients, integrating chat and video communication, and handling chess-specific edge cases like draws, stalemates, pawn promotions, and checkmate detection.
 
 🔑 Features
