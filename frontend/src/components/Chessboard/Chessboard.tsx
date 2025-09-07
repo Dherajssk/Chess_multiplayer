@@ -15,15 +15,20 @@ type ChessboardProps = {
   chess: any;
   setBoard: any;
   flipped?: boolean;
+  onDraw?: (reason: string) => void;
+  playerColor: Color;
+  disabled?: boolean;
 };
-
-export const Chessboard = ({
+export const Chessboard: React.FC<ChessboardProps> = ({
   board,
   socket,
   chess,
   setBoard,
   flipped = false,
-}: ChessboardProps) => {
+  onDraw,
+  playerColor,
+  disabled = false,
+}) => {
   const [from, setFrom] = useState<null | Square>(null);
 
   // Proper orientation: when flipped is true, Black is at the bottom
@@ -55,7 +60,9 @@ export const Chessboard = ({
               <div
                 key={colIdx}
                 onClick={() => {
-                  const playerColor = chess.turn(); // 'w' or 'b'
+                  if (disabled) return;
+                  // Only allow moving if it's the player's turn
+                  if (chess.turn() !== playerColor) return;
                   if (!from) {
                     // Only allow selecting a piece of the player's color
                     if (square && square.color === playerColor) {
@@ -85,6 +92,12 @@ export const Chessboard = ({
                     setFrom(null);
                     setBoard(chess.board());
                     console.log(`Move from ${from} to ${to}`);
+                    // Check for threefold repetition
+                    if (chess.isThreefoldRepetition && chess.isThreefoldRepetition()) {
+                      if (typeof onDraw === 'function') {
+                        onDraw('threefold');
+                      }
+                    }
                   }
                 }}
                 className={`w-12 h-12 flex items-center justify-center text-lg font-bold cursor-pointer transition-all duration-150 ${bgColor} ${

@@ -16,6 +16,7 @@ export const Game = () => {
   const [board, setBoard] = useState(chess.board());
   const [color, setColor] = useState<"w" | "b">("w");
   const [winner, setWinner] = useState<null | "w" | "b">(null);
+  const [drawReason, setDrawReason] = useState<string | null>(null);
   const [gameStarted, setGameStarted] = useState(false);
   const [chatMessages, setChatMessages] = useState<{ sender: string; text: string }[]>([]);
   const [waiting, setWaiting] = useState(false);
@@ -79,9 +80,14 @@ export const Game = () => {
         console.log("Move received:", move);
       } else if (message.type === "GAME_OVER") {
         let winColor = message.payload.winner;
-        if (winColor === "white") winColor = "w";
-        if (winColor === "black") winColor = "b";
-        setWinner(winColor);
+        if (winColor === "draw" || winColor === "drawn") {
+          setDrawReason('server');
+          setWinner(null);
+        } else {
+          if (winColor === "white") winColor = "w";
+          if (winColor === "black") winColor = "b";
+          setWinner(winColor);
+        }
         setGameStarted(false);
       } else if (message.type === "CHAT") {
         setChatMessages((prev) => [...prev, { sender: message.payload.sender, text: message.payload.text }]);
@@ -151,7 +157,17 @@ export const Game = () => {
         </div>
         {/* Chessboard */}
         <div className="col-span-4 flex flex-col items-center justify-center chessboard-container">
-          {winner && (
+          {drawReason === 'threefold' && (
+            <div className="winner-banner bg-yellow-400 text-black">
+              Game Drawn by Threefold Repetition!
+            </div>
+          )}
+          {drawReason === 'server' && (
+            <div className="winner-banner bg-yellow-400 text-black">
+              Game Drawn!
+            </div>
+          )}
+          {!drawReason && winner && (
             <div className="winner-banner">
               Game Over! Winner: {winner === "w" ? "White" : "Black"}
             </div>
@@ -162,6 +178,13 @@ export const Game = () => {
             socket={socket}
             board={board}
             flipped={color === "b"}
+            playerColor={color}
+            disabled={!!winner || !!drawReason}
+            onDraw={(reason) => {
+              setDrawReason(reason);
+              setWinner(null);
+              setGameStarted(false);
+            }}
           />
         </div>
         {/* Sidebar: Play button + Move history */}
@@ -170,6 +193,8 @@ export const Game = () => {
             disabled={gameStarted}
             onClick={() => {
               socket?.send(JSON.stringify({ type: INIT_GAME }));
+              setDrawReason(null);
+              setWinner(null);
             }}
             className={`btn w-full mb-4 text-lg ${gameStarted ? "bg-gray-400 cursor-not-allowed" : ""}`}
           >
@@ -201,4 +226,4 @@ export const Game = () => {
       </div>
     </div>
   );
-};
+}
